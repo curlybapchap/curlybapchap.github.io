@@ -4,6 +4,7 @@
 <head>
   <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
   <meta content="utf-8" http-equiv="encoding">
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
   <style type="text/css">
     body {
       background-color: #d2d2d2;
@@ -11,85 +12,225 @@
 
     #canvas {
       background-color: #000;
-      display: block;
-      margin: auto;
+      /* display: block; */
+      /* margin: auto; */
     }
 
     #logo {
       display: none;
+    }
+
+    .flexChild {
+      flex: 1;
+      border: 2px solid yellow;
     }
   </style>
 
 </head>
 
 <body>
-  <!-- <canvas id="canvas" width="600px" height="400px"></canvas> -->
-  <canvas id="canvas"></canvas>
+  <div id="canvasContainer" style="display: flex;">
+    <canvas id="canvas" class="flexChild"></canvas>
+    <canvas id="doubleHelix" class="flexChild"></canvas>
+  </div>
 </body>
 
 <script type="text/javascript">
-  const canvas = document.getElementById('canvas');
-  resizeCanvas();
-  var ctx = canvas.getContext('2d');
-  var t = text();
-  var lines = [];
-  window.setInterval(draw, 100);
+const helixCanvas = $('#doubleHelix');
+const canvas = document.getElementById('canvas');
+  matrixText();
 
-  window.addEventListener('resize', resizeCanvas, false);
+  function matrixText() {
+    
+    resizeCanvas();
+    var ctx = canvas.getContext('2d');
+    var t = text();
+    var lines = [];
+    window.setInterval(draw, 100);
 
-  function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  }
-  resizeCanvas();
+    window.addEventListener('resize', resizeCanvas, false);
 
-  function draw() {
-    if (Math.floor(Math.random() * 2) === 0 && lines.length < 100) {
-      lines.push(new textLine());
+    function resizeCanvas() {
+      canvas.width = window.innerWidth / 2;
+      canvas.height = window.innerHeight;
+      helixCanvas.width = window.innerWidth / 2;
+      helixCanvas.height = window.innerHeight;
     }
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    lines.forEach(function (tl) {
-      ctx.drawImage(tl.text, tl.posX, tl.animate(), 20, 1000);
-    });
-  }
+    resizeCanvas();
 
-  function textLine() {
-    this.text = t;
-    this.posX = (function () { return Math.floor(Math.random() * canvas.width); })();
-    this.offsetY = -1000;
-    this.animate = function () {
-      if (this.offsetY >= 0) { this.offsetY = -1000; }
-      this.offsetY += 10;
-      return this.offsetY;
-    };
-  }
-
-  function text() {
-    var offscreenCanvas = document.createElement('canvas');
-    //offscreenCanvas.width = window.innerWidth;
-    //offscreenCanvas.height = window.innerHeight;
-    // offscreenCanvas.width = canvas.width;
-    // offscreenCanvas.height = canvas.height;
-     offscreenCanvas.width = "30";
-     offscreenCanvas.height = "1000";
-    offscreenCanvas.style.display = "none";
-    document.body.appendChild(offscreenCanvas);
-    var octx = offscreenCanvas.getContext('2d');
-    octx.textAlign = "center";
-    octx.shadowColor = "lightgreen";
-    octx.shadowOffsetX = 2;
-    octx.shadowOffsetY = -5;
-    octx.shadowBlur = 1;
-    octx.fillStyle = 'darkgreen';
-    octx.textAlign = "left";
-    var step = 10;
-    for (i = 0; i < 100; i++) {
-      var charCode = 0;
-      while (charCode < 60) { charCode = Math.floor(Math.random() * 100); }
-      octx.fillText(String.fromCharCode(charCode), 0, step); step += 10;
+    function draw() {
+      if (Math.floor(Math.random() * 2) === 0 && lines.length < 100) {
+        lines.push(new textLine());
+      }
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      lines.forEach(function (tl) {
+        ctx.drawImage(tl.text, tl.posX, tl.animate(), 20, 1000);
+      });
     }
-    return offscreenCanvas;
+
+    function textLine() {
+      this.text = t;
+      this.posX = (function () { return Math.floor(Math.random() * canvas.width); })();
+      this.offsetY = -1000;
+      this.animate = function () {
+        if (this.offsetY >= 0) { this.offsetY = -1000; }
+        this.offsetY += 10;
+        return this.offsetY;
+      };
+    }
+
+    function text() {
+      var offscreenCanvas = document.createElement('canvas');
+      //offscreenCanvas.width = window.innerWidth;
+      //offscreenCanvas.height = window.innerHeight;
+      // offscreenCanvas.width = canvas.width;
+      // offscreenCanvas.height = canvas.height;
+      offscreenCanvas.width = "30";
+      offscreenCanvas.height = "1000";
+      offscreenCanvas.style.display = "none";
+      document.body.appendChild(offscreenCanvas);
+      var octx = offscreenCanvas.getContext('2d');
+      octx.textAlign = "center";
+      octx.shadowColor = "lightgreen";
+      octx.shadowOffsetX = 2;
+      octx.shadowOffsetY = -5;
+      octx.shadowBlur = 1;
+      octx.fillStyle = 'darkgreen';
+      octx.textAlign = "left";
+      var step = 10;
+      for (i = 0; i < 100; i++) {
+        var charCode = 0;
+        while (charCode < 60) { charCode = Math.floor(Math.random() * 100); }
+        octx.fillText(String.fromCharCode(charCode), 0, step); step += 10;
+      }
+      return offscreenCanvas;
+    }
   }
+
+  function doubleHelix() {
+    helixCanvas.attr({ height: $(document).height() });
+    helixCanvas.css({ position: "absolute", top: 0, left: 0 });
+    $("canvasContainer").append(helixCanvas);
+    helixCanvas.DoubleHelix();
+  }
+
+  (function ($) {
+    $.fn.DoubleHelix = function (options) {
+      var settings = {
+        fps: 24,
+        fgColor: "0,0,0",
+        bgColor: "transparent"
+      }
+
+      if (options) { settings = $.extend(settings, options); }
+
+      var calculator = function (c, dim, t, y) {
+        var x1 = 0, x2 = 0, z1 = 0, z2 = 0;
+
+        var drawShape = function (x, y, opacity) {
+          c.fillStyle = "rgba(" + settings.fgColor + "," + opacity + ")";
+          c.beginPath();
+          c.arc(x + 5, y + 5, 5, 0, Math.PI * 2, true);
+          c.closePath();
+          c.fill();
+        }
+
+        var drawLine = function (y, x1, x2, z1, z2) {
+          c.beginPath();
+          c.moveTo(x1 + 5, y + 5);
+          c.lineTo(x2 + 5, y + 5);
+          var g = c.createLinearGradient(x1, y, x2, y);
+          g.addColorStop(0, "rgba(" + settings.fgColor + "," + z1 + ")");
+          g.addColorStop(1, "rgba(" + settings.fgColor + "," + z2 + ")");
+          c.strokeStyle = g;
+          c.stroke();
+        }
+
+        var fix = function (n) {
+          return Math.round(n * 10) / 10;
+        }
+
+        return {
+          calculate: function () {
+            t += 0.25;
+            x1 = Math.cos(t / 360 * (Math.PI * 2));
+            x2 = Math.sin((t + 270) / 360 * (Math.PI * 2));
+            z1 = Math.cos((t + 90) / 360 * (Math.PI * 2));
+            z2 = Math.sin((t + 360) / 360 * (Math.PI * 2));
+          },
+
+          draw: function () {
+            var _x1 = fix((x1 * (dim.halfWidth - 5)) + dim.halfWidth - 5);
+            var _x2 = fix((x2 * (dim.halfWidth - 5)) + dim.halfWidth - 5);
+            var _z1 = (z1 + 1) / 2;
+            var _z2 = (z2 + 1) / 2;
+
+            if (_x1 != 45) { drawLine(y, _x1, _x2, _z1, _z2); }
+
+            drawShape(_x1, y, _z1);
+            drawShape(_x2, y, _z2);
+          }
+        }
+      }
+
+      return this.each(function (i) {
+        var c = this.getContext('2d');
+
+        var dim = {
+          width: c.canvas.width,
+          height: c.canvas.height,
+          halfHeight: c.canvas.height / 2,
+          halfWidth: c.canvas.width / 2
+        }
+
+        var buffer = document.createElement('canvas');
+        buffer.setAttribute('width', dim.width);
+        buffer.setAttribute('height', 180);
+
+        var cb = buffer.getContext('2d');
+
+        var calculators = [];
+        for (n = 0; n < 9; n++) {
+          var calc = new calculator(cb, dim, n * 20, n * 20);
+          calculators[n] = calc;
+        }
+
+        var copies = dim.height > 180 ? Math.ceil(dim.height / 180) : 1;
+
+        var now, delta;
+        var then = Date.now();
+        var interval = 10 / settings.fps;
+
+        var draw = function () {
+          requestAnimationFrame(draw);
+
+          now = Date.now();
+          delta = now - then;
+
+          if (delta >= interval) {
+            cb.clearRect(0, 0, dim.width, dim.height);
+            cb.fillStyle = settings.bgColor;
+            cb.fillRect(0, 0, dim.width, dim.height);
+            $.each(calculators, function (i, calc) {
+              calc.calculate();
+              calc.draw();
+            });
+
+            c.clearRect(0, 0, dim.width, dim.height);
+            for (var n = 0; n < copies; n++) {
+              c.drawImage(buffer, 0, n * 180);
+            }
+
+            then = now - (delta % interval);
+          }
+        }
+
+        draw();
+      });
+    }
+  })(jQuery);
+
+  doubleHelix();
 </script>
 
 </html>
