@@ -19,5 +19,9 @@
   "bugs": {
     "url": "https://github.com/curlybapchap/curlybapchap.github.io/issues"
   },
-  "homepage": "https://github.com/curlybapchap/curlybapchap.github.io#readme"
+  "homepage": "https://github.com/curlybapchap/curlybapchap.github.io#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "express-http-to-https": "^1.1.4"
+  }
 }

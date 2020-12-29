@@ -29,6 +29,10 @@ function getUserFromCache(user) {
       });
 }
 
+function getForecastCard(user) {
+  
+}
+
 /**
  * Gets the latest weather forecast data and updates each card with the
  * new data.
@@ -43,11 +47,18 @@ function updateData() {
       renderUser(card, user);
     });
     // Get the forecast data from the network.
-    getForecastFromNetwork(user.Name)
-        .then((user) => {
-          renderUser(card, user);
-        });
+    // getForecastFromNetwork(user.Name)
+    //     .then((user) => {
+    //       renderUser(card, user);
+    //     });
   });
+}
+
+function renderUser(user) {
+  if (!user) {
+    // There's no data, skip the update.
+    return;
+  }
 }
 
 /**
@@ -76,7 +87,7 @@ function loadUserList() {
   }
   if (!users || Object.keys(users).length === 0) {
     users = {};
-    users[key] = {name: 'Paul', favColour: 'Cyan'};
+    users["Paul"] = {favColour: 'Cyan'};
   }
   return users;
 }
@@ -87,16 +98,16 @@ function loadUserList() {
  */
 function init() {
   // Get the location list, and update the UI.
-  renderUser.selectedUsers = loaduserList();
+  pwa01.selectedUsers = loadUserList();
   updateData();
 
   // Set up the event handlers for all of the buttons.
   document.getElementById('butRefresh').addEventListener('click', updateData);
-  document.getElementById('butAdd').addEventListener('click', toggleAddDialog);
-  document.getElementById('butDialogCancel')
-      .addEventListener('click', toggleAddDialog);
-  document.getElementById('butDialogAdd')
-      .addEventListener('click', addUser);
+  // document.getElementById('butAdd').addEventListener('click', toggleAddDialog);
+  // document.getElementById('butDialogCancel')
+  //     .addEventListener('click', toggleAddDialog);
+  // document.getElementById('butDialogAdd')
+  //     .addEventListener('click', addUser);
 }
 
 init();
