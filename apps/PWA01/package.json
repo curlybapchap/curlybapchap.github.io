@@ -1,0 +1,23 @@
+{
+  "name": "pwa01",
+  "version": "1.0.0",
+  "description": "Prototype PWA",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/curlybapchap/curlybapchap.github.io.git"
+  },
+  "keywords": [
+    "PWA"
+  ],
+  "author": "Paul Logan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/curlybapchap/curlybapchap.github.io/issues"
+  },
+  "homepage": "https://github.com/curlybapchap/curlybapchap.github.io#readme"
+}
